@@ -134,7 +134,9 @@ class BOTAN_DLL Library_State
 
       Mutex* allocator_lock;
       std::string default_allocator_name;
-      std::map<std::string, Allocator*> alloc_factory;
+      typedef std::map<std::string, Allocator*> Alloc_factory;
+      Alloc_factory* alloc_factory_ptr;
+      std::vector<Alloc_factory*> alloc_factories;
       mutable Allocator* cached_default_allocator;
       std::vector<Allocator*> allocators;
 

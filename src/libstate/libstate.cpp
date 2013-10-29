@@ -69,12 +69,12 @@ Allocator* Library_State::get_allocator(const std::string& type) const
    Mutex_Holder lock(allocator_lock);
 
    if(type != "")
-      return search_map<std::string, Allocator*>(alloc_factory, type, 0);
+      return search_map<std::string, Allocator*>(*alloc_factory_ptr, type, 0);
 
    if(!cached_default_allocator)
       {
       cached_default_allocator =
-         search_map<std::string, Allocator*>(alloc_factory,
+         search_map<std::string, Allocator*>(*alloc_factory_ptr,
                                              default_allocator_name, 0);
       }
 
@@ -91,7 +91,12 @@ void Library_State::add_allocator(Allocator* allocator)
    allocator->init();
 
    allocators.push_back(allocator);
-   alloc_factory[allocator->type()] = allocator;
+
+   Alloc_factory* old = alloc_factory_ptr;
+   Alloc_factory* copy = new Alloc_factory(*old);
+   (*copy)[allocator->type()] = allocator;
+   alloc_factory_ptr = copy;
+   alloc_factories.push_back(old);
    }
 
 /*
@@ -267,6 +272,7 @@ Library_State::Library_State()
    {
    mutex_factory = 0;
    allocator_lock = config_lock = 0;
+   alloc_factory_ptr = new Alloc_factory();
    cached_default_allocator = 0;
    m_algorithm_factory = 0;
 
@@ -282,12 +288,18 @@ Library_State::~Library_State()
    delete m_algorithm_factory;
    delete global_rng_ptr;
 
+   delete alloc_factory_ptr;
    cached_default_allocator = 0;
 
    for(size_t i = 0; i != allocators.size(); ++i)
       {
       allocators[i]->destroy();
       delete allocators[i];
+      }
+
+   for(size_t i = 0; i != alloc_factories.size(); ++i)
+      {
+      delete alloc_factories[i];
       }
 
    delete global_rng_lock;
