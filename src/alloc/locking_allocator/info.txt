@@ -6,4 +6,5 @@ freebsd
 netbsd
 openbsd
 solaris
+darwin
 </os>

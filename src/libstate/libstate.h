@@ -17,6 +17,10 @@
 #include <map>
 #include <memory>
 
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+  #include <botan/locking_allocator.h>
+#endif
+
 namespace Botan {
 
 /**
@@ -110,6 +114,10 @@ class BOTAN_DLL Library_State
       std::map<std::string, std::string> config;
 
       Algorithm_Factory* m_algorithm_factory;
+
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+      mlock_allocator* mlock_allocator_ptr;
+#endif
    };
 
 }

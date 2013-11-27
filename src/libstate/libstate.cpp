@@ -131,6 +131,10 @@ void Library_State::initialize()
    if(m_algorithm_factory)
       throw Invalid_State("Library_State has already been initialized");
 
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+   mlock_allocator_ptr = mlock_allocator::instance();
+#endif
+
    load_default_config();
 
    m_algorithm_factory = new Algorithm_Factory();
@@ -171,6 +175,9 @@ Library_State::Library_State()
    {
    m_algorithm_factory = nullptr;
    global_rng_ptr = nullptr;
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+   mlock_allocator_ptr = nullptr;
+#endif
    }
 
 /*
@@ -183,6 +190,11 @@ Library_State::~Library_State()
 
    delete global_rng_ptr;
    global_rng_ptr = nullptr;
+
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+   delete mlock_allocator_ptr;
+   mlock_allocator_ptr = nullptr;
+#endif
    }
 
 }

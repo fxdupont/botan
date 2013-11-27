@@ -213,6 +213,9 @@ mlock_allocator::mlock_allocator() :
 #if !defined(MAP_NOCORE)
    #define MAP_NOCORE 0
 #endif
+#if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
+   #define MAP_ANONYMOUS MAP_ANON
+#endif
 
    if(m_poolsize)
       {
@@ -253,9 +256,13 @@ mlock_allocator::~mlock_allocator()
       }
    }
 
-mlock_allocator& mlock_allocator::instance()
+mlock_allocator* mlock_allocator::mlock = nullptr;
+
+mlock_allocator* mlock_allocator::instance()
    {
-   static mlock_allocator mlock;
+   if (!mlock)
+     mlock = new mlock_allocator();
+
    return mlock;
    }
 

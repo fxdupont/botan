@@ -17,7 +17,9 @@ namespace Botan {
 class BOTAN_DLL mlock_allocator
    {
    public:
-      static mlock_allocator& instance();
+      ~mlock_allocator();
+
+      static mlock_allocator* instance();
 
       void* allocate(size_t num_elems, size_t elem_size);
 
@@ -30,7 +32,7 @@ class BOTAN_DLL mlock_allocator
    private:
       mlock_allocator();
 
-      ~mlock_allocator();
+      static mlock_allocator* mlock;
 
       const size_t m_poolsize;
 
