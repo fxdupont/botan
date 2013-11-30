@@ -49,4 +49,5 @@ x86_64  -> "-m64"
 ppc64   -> "-m64"
 
 netbsd  -> "-D_NETBSD_SOURCE"
+darwin  -> "-stdlib=libc++"
 </mach_abi_linking>

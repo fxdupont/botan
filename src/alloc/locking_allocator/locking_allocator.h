@@ -32,8 +32,6 @@ class BOTAN_DLL mlock_allocator
    private:
       mlock_allocator();
 
-      static mlock_allocator* mlock;
-
       const size_t m_poolsize;
 
       std::mutex m_mutex;

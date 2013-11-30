@@ -18,8 +18,19 @@
 
 namespace Botan {
 
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+class secure_allocator_parent
+  {
+  protected:
+     mlock_allocator* mlock_allocator_ptr = mlock_allocator::instance();
+  };
+#endif
+
 template<typename T>
 class secure_allocator
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+   : private secure_allocator_parent
+#endif
    {
    public:
       typedef T          value_type;
@@ -46,7 +57,7 @@ class secure_allocator
       pointer allocate(size_type n, const void* = 0)
          {
 #if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
-         if(pointer p = static_cast<pointer>(mlock_allocator::instance()->allocate(n, sizeof(T))))
+         if(pointer p = static_cast<pointer>(mlock_allocator_ptr->allocate(n, sizeof(T))))
             return p;
 #endif
 
@@ -60,7 +71,7 @@ class secure_allocator
          clear_mem(p, n);
 
 #if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
-         if(mlock_allocator::instance()->deallocate(p, n, sizeof(T)))
+         if(mlock_allocator_ptr->deallocate(p, n, sizeof(T)))
             return;
 #endif
 

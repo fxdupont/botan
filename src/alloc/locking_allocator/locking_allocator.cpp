@@ -256,14 +256,14 @@ mlock_allocator::~mlock_allocator()
       }
    }
 
-mlock_allocator* mlock_allocator::mlock = nullptr;
-
 mlock_allocator* mlock_allocator::instance()
    {
-   if (!mlock)
-     mlock = new mlock_allocator();
+   static mlock_allocator* ip = nullptr;
 
-   return mlock;
+   if (!ip)
+     ip = new mlock_allocator();
+
+   return ip;
    }
 
 }
