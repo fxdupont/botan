@@ -27,6 +27,9 @@ namespace Botan {
 * Global Library State
 */
 class BOTAN_DLL Library_State
+#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
+   : private locking_allocator
+#endif
    {
    public:
       Library_State();
@@ -114,10 +117,6 @@ class BOTAN_DLL Library_State
       std::map<std::string, std::string> config;
 
       Algorithm_Factory* m_algorithm_factory;
-
-#if defined(BOTAN_HAS_LOCKING_ALLOCATOR)
-      mlock_allocator* mlock_allocator_ptr;
-#endif
    };
 
 }

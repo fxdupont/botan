@@ -19,8 +19,6 @@ class BOTAN_DLL mlock_allocator
    public:
       ~mlock_allocator();
 
-      static mlock_allocator* instance();
-
       void* allocate(size_t num_elems, size_t elem_size);
 
       bool deallocate(void* p, size_t num_elems, size_t elem_size);
@@ -32,12 +30,22 @@ class BOTAN_DLL mlock_allocator
    private:
       mlock_allocator();
 
+      static mlock_allocator* instance();
+
+      friend class locking_allocator;
+
       const size_t m_poolsize;
 
       std::mutex m_mutex;
       std::vector<std::pair<size_t, size_t>> m_freelist;
       byte* m_pool;
    };
+
+class BOTAN_DLL locking_allocator
+  {
+  protected:
+     static mlock_allocator* locking_allocator_ptr;
+  };
 
 }
 

@@ -266,4 +266,6 @@ mlock_allocator* mlock_allocator::instance()
    return ip;
    }
 
+mlock_allocator* locking_allocator::locking_allocator_ptr = mlock_allocator::instance();
+
 }
